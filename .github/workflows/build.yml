@@ -27,7 +27,7 @@ jobs:
         git clone --depth=1 -b $GCC_BRANCH https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git $GCC_PATH
         git clone --depth=1 -b $GCC_BRANCH https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 $GCC32_PATH
     
-    - name: Cache multiple paths
+    - name: Restore cache
       uses: actions/cache@v2
       with:
         path: |
