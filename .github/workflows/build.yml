@@ -12,9 +12,12 @@ jobs:
       GCC32_PATH: /prebuilt/gcc32
       GCC_BRANCH: lineage-18.0
       IMAGEDTB_PATH: out/arch/arm64/boot/Image.gz-dtb
-      OUTPUT_FILE_PATH: Kernel-lavender-$(date +"%F")
 
     steps:
+
+    - name: Setup additional environment variables
+      run: |
+        echo "OUTPUT_FILE_PATTERN=Kernel-lavender-$(date +"%F")" >> $GITHUB_ENV
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -52,17 +55,17 @@ jobs:
       run: |
         cd $ANYKERNEL_PATH
         mv $GITHUB_WORKSPACE/$IMAGEDTB_PATH .
-        zip -r9 $GITHUB_WORKSPACE/$OUTPUT_FILE_PATH *
+        zip -r9 $GITHUB_WORKSPACE/$OUTPUT_FILE_PATTERN *
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       with:
-        path: $GITHUB_WORKSPACE/$OUTPUT_FILE_PATH
+        path: $GITHUB_WORKSPACE/$OUTPUT_FILE_PATTERN
     
     - name: Upload binaries to release
       if: startsWith(github.ref, 'refs/tag/v')
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: $OUTPUT_FILE_PATH
+        file: $OUTPUT_FILE_PATTERN
         tag: ${{ github.ref }}
