@@ -18,7 +18,7 @@ jobs:
     - name: Setup additional environment variables
       id: setup_env
       run: |
-        echo "OUTPUT_FILE_PATTERN=Kernel-lavender-$(date +\"%F\")" >> $GITHUB_ENV
+        echo "##[set-output name=output_file;]$(echo Kernel-lavender-$(date +\"%F\"))"
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
 
     - name: Checkout
@@ -62,18 +62,18 @@ jobs:
       run: |
         cd $ANYKERNEL_PATH
         mv $GITHUB_WORKSPACE/$IMAGEDTB_PATH .
-        zip -r9 $GITHUB_WORKSPACE/$OUTPUT_FILE_PATTERN *
+        zip -r9 $GITHUB_WORKSPACE/${{ steps.setup_env.outputs.output_file }} *
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       with:
-        path: $GITHUB_WORKSPACE/$OUTPUT_FILE_PATTERN
-        name: $OUTPUT_FILE_PATTERN
+        path: $GITHUB_WORKSPACE/${{ steps.setup_env.outputs.output_file }}
+        name: ${{ steps.setup_env.outputs.output_file }}
     
     - name: Upload binaries to release
       if: startsWith(github.ref, 'refs/tag/v')
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: $GITHUB_WORKSPACE/$OUTPUT_FILE_PATTERN
+        file: $GITHUB_WORKSPACE/${{ steps.setup_env.outputs.output_file }}
         tag: ${{ github.ref }}
