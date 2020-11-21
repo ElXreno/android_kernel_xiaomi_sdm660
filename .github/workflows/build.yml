@@ -43,9 +43,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-ccache-
 
-    - name: Dump ccache stats
-      run: ccache -s
-
     - name: Build
       run: |
         export PATH="$CLANG_PATH/bin:$GCC_PATH/bin:$GCC32_PATH/bin:$PATH"
