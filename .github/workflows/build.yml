@@ -18,7 +18,7 @@ jobs:
     - name: Setup additional environment variables
       id: setup_env
       run: |
-        echo "##[set-output name=output_file;]$(echo Kernel-lavender-$(date +\"%F\"))"
+        echo "##[set-output name=output_file;]$(echo Kernel-lavender-$(date +%F)).zip"
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
 
     - name: Checkout
@@ -67,7 +67,7 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       with:
-        path: $GITHUB_WORKSPACE/${{ steps.setup_env.outputs.output_file }}
+        path: ${{ steps.setup_env.outputs.output_file }}
         name: ${{ steps.setup_env.outputs.output_file }}
     
     - name: Upload binaries to release
@@ -75,5 +75,5 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: $GITHUB_WORKSPACE/${{ steps.setup_env.outputs.output_file }}
+        file: ${{ steps.setup_env.outputs.output_file }}
         tag: ${{ github.ref }}
