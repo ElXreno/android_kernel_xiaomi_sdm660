@@ -1,0 +1,81 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    env:
+      USE_CCACHE: true
+      ANYKERNEL_PATH: /prebuilt/AnyKernel
+      CLANG_PATH: /prebuilt/clang
+      IMAGEDTB_PATH: $GITHUB_WORKSPACE/out/arch/arm64/boot/Image.gz-dtb
+      OUTPUT_FILE_PATH: $GITHUB_WORKSPACE/Kernel-lavender-$(date +"%F")
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Install build dependencies
+      run: |
+        sudo apt update 
+        sudo apt install -y bc \
+          bison \
+          ca-certificates \
+          curl \
+          flex \
+          gcc \
+          git \
+          libc6-dev \
+          libssl-dev \
+          make \
+          openssl \
+          python \
+          ssh \
+          wget \
+          zip \
+          zstd
+        sudo sh -c "mkdir /{build,prebuilt} && chown $(whoami):$(whoami) /{build,prebuilt}"
+        git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6875598.git $CLANG_PATH
+        git clone https://github.com/ElXreno/AnyKernel3 $ANYKERNEL_PATH
+
+    - name: Prepare & Sync
+      run: |
+        echo "$CLANG_PATH/bin" >> $GITHUB_PATH
+    
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.ccache
+        key: ${{ runner.os }}-${{ hashFiles('**/arch/arm64/configs/lavender_defconfig') }}
+
+    - name: Build
+      run: |
+        make O=out ARCH=arm64 lavender_defconfig
+        make -j$(nproc --all) O=out \
+          ARCH=arm64 \
+          CC=clang \
+          CLANG_TRIPLE=aarch64-linux-gnu- \
+          CROSS_COMPILE=aarch64-linux-android- \
+          CROSS_COMPILE_ARM32=arm-linux-androideabi-
+
+    - name: Archive
+      run: |
+        cd $ANYKERNEL_PATH
+        mv $IMAGEDTB_PATH .
+        zip -r9 $OUTPUT_FILE_PATH *
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        path: $OUTPUT_FILE_PATH
+    
+    - name: Upload binaries to release
+      if: startsWith(github.ref, 'refs/tag/v')
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: $OUTPUT_FILE_PATH
+        tag: ${{ github.ref }}
