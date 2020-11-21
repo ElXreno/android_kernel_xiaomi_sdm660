@@ -30,11 +30,11 @@ jobs:
         git clone --depth=1 -b $GCC_BRANCH https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 $GCC32_PATH
     
     - name: Restore cache
-      uses: actions/cache@v2
+      uses: pat-s/always-upload-cache@v2
       with:
         path: |
           ~/.ccache
-        key: ${{ runner.os }}-${{ hashFiles('**/arch/arm64/configs/lavender_defconfig') }}
+        key: ${{ runner.os }}-ccache
 
     - name: Build
       run: |
