@@ -21,6 +21,8 @@ jobs:
       
     - name: Install build dependencies
       run: |
+        sudo apt-get update
+        sudo apt install -y ccache
         sudo bash -c "mkdir /{build,prebuilt} && chown $(whoami):$(whoami) /{build,prebuilt}"
         git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6875598.git $CLANG_PATH
         git clone https://github.com/ElXreno/AnyKernel3.git $ANYKERNEL_PATH
