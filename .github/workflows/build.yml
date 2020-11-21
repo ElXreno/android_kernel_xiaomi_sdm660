@@ -34,9 +34,8 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/arch/arm64/configs/lavender_defconfig') }}
 
     - name: Build
-      env:
-        PATH: $CLANG_PATH/bin:$GCC_PATH/bin:$PATH
       run: |
+        export PATH="$CLANG_PATH/bin:$GCC_PATH/bin:$PATH"
         make O=out ARCH=arm64 lavender_defconfig
         make -j$(nproc --all) O=out \
           ARCH=arm64 \
