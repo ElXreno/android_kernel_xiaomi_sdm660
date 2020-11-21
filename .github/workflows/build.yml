@@ -25,11 +25,6 @@ jobs:
         git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6875598.git $CLANG_PATH
         git clone https://github.com/ElXreno/AnyKernel3.git $ANYKERNEL_PATH
         git clone --depth=1 -b $GCC_BRANCH https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git $GCC_PATH
-
-    - name: Prepare & Sync
-      run: |
-        echo "$CLANG_PATH/bin" >> $GITHUB_PATH
-        echo "$GCC_PATH/bin" >> $GITHUB_PATH
     
     - name: Cache multiple paths
       uses: actions/cache@v2
@@ -39,6 +34,8 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/arch/arm64/configs/lavender_defconfig') }}
 
     - name: Build
+      env:
+        PATH: $CLANG_PATH/bin:$GCC_PATH/bin:$PATH
       run: |
         make O=out ARCH=arm64 lavender_defconfig
         make -j$(nproc --all) O=out \
