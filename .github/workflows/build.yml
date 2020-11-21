@@ -12,8 +12,8 @@ jobs:
       GCC_PATH: /prebuilt/gcc
       GCC32_PATH: /prebuilt/gcc32
       GCC_BRANCH: lineage-18.0
-      IMAGEDTB_PATH: $GITHUB_WORKSPACE/out/arch/arm64/boot/Image.gz-dtb
-      OUTPUT_FILE_PATH: $GITHUB_WORKSPACE/Kernel-lavender-$(date +"%F")
+      IMAGEDTB_PATH: out/arch/arm64/boot/Image.gz-dtb
+      OUTPUT_FILE_PATH: Kernel-lavender-$(date +"%F")
 
     steps:
 
@@ -50,13 +50,13 @@ jobs:
     - name: Archive
       run: |
         cd $ANYKERNEL_PATH
-        mv $IMAGEDTB_PATH .
-        zip -r9 $OUTPUT_FILE_PATH *
+        mv $GITHUB_WORKSPACE/$IMAGEDTB_PATH .
+        zip -r9 $GITHUB_WORKSPACE/$OUTPUT_FILE_PATH *
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       with:
-        path: $OUTPUT_FILE_PATH
+        path: $GITHUB_WORKSPACE/$OUTPUT_FILE_PATH
     
     - name: Upload binaries to release
       if: startsWith(github.ref, 'refs/tag/v')
