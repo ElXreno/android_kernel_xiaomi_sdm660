@@ -9,6 +9,8 @@ jobs:
       USE_CCACHE: true
       ANYKERNEL_PATH: /prebuilt/AnyKernel
       CLANG_PATH: /prebuilt/clang
+      GCC_PATH: /prebuilt/gcc
+      GCC_BRANCH: android-10.0.0_r41
       IMAGEDTB_PATH: $GITHUB_WORKSPACE/out/arch/arm64/boot/Image.gz-dtb
       OUTPUT_FILE_PATH: $GITHUB_WORKSPACE/Kernel-lavender-$(date +"%F")
 
@@ -37,13 +39,14 @@ jobs:
           zip \
           zstd
         sudo bash -c "mkdir /{build,prebuilt} && chown $(whoami):$(whoami) /{build,prebuilt}"
-        ls /
         git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6875598.git $CLANG_PATH
         git clone https://github.com/ElXreno/AnyKernel3 $ANYKERNEL_PATH
+        git clone --depth=1 -b $GCC_BRANCH https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9 $GCC_PATH
 
     - name: Prepare & Sync
       run: |
         echo "$CLANG_PATH/bin" >> $GITHUB_PATH
+        echo "$GCC_PATH/bin" >> $GITHUB_PATH
     
     - name: Cache multiple paths
       uses: actions/cache@v2
