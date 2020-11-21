@@ -36,6 +36,7 @@ jobs:
     - name: Build
       run: |
         export PATH="$CLANG_PATH/bin:$GCC_PATH/bin:$PATH"
+        make O=out ARCH=arm64 clean
         make O=out ARCH=arm64 lavender_defconfig
         make -j$(nproc --all) O=out \
           ARCH=arm64 \
