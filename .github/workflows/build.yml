@@ -10,7 +10,7 @@ jobs:
       ANYKERNEL_PATH: /prebuilt/AnyKernel
       CLANG_PATH: /prebuilt/clang
       GCC_PATH: /prebuilt/gcc
-      GCC_BRANCH: android-10.0.0_r41
+      GCC_BRANCH: lineage-18.0
       IMAGEDTB_PATH: $GITHUB_WORKSPACE/out/arch/arm64/boot/Image.gz-dtb
       OUTPUT_FILE_PATH: $GITHUB_WORKSPACE/Kernel-lavender-$(date +"%F")
 
@@ -21,27 +21,10 @@ jobs:
       
     - name: Install build dependencies
       run: |
-        sudo apt update 
-        sudo apt install -y bc \
-          bison \
-          ca-certificates \
-          curl \
-          flex \
-          gcc \
-          git \
-          libc6-dev \
-          libssl-dev \
-          make \
-          openssl \
-          python \
-          ssh \
-          wget \
-          zip \
-          zstd
         sudo bash -c "mkdir /{build,prebuilt} && chown $(whoami):$(whoami) /{build,prebuilt}"
         git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6875598.git $CLANG_PATH
-        git clone https://github.com/ElXreno/AnyKernel3 $ANYKERNEL_PATH
-        git clone --depth=1 -b $GCC_BRANCH https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9 $GCC_PATH
+        git clone https://github.com/ElXreno/AnyKernel3.git $ANYKERNEL_PATH
+        git clone --depth=1 -b $GCC_BRANCH https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git $GCC_PATH
 
     - name: Prepare & Sync
       run: |
