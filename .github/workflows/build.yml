@@ -16,8 +16,10 @@ jobs:
     steps:
 
     - name: Setup additional environment variables
+      id: setup_env
       run: |
-        echo "OUTPUT_FILE_PATTERN=Kernel-lavender-$(date +"%F")" >> $GITHUB_ENV
+        echo "OUTPUT_FILE_PATTERN=Kernel-lavender-$(date +\"%F\")" >> $GITHUB_ENV
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -37,7 +39,9 @@ jobs:
       with:
         path: |
           ~/.ccache
-        key: ${{ runner.os }}-ccache
+        key: ${{ runner.os }}-ccache-${{ steps.setup_env.outputs.branch }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
 
     - name: Build
       run: |
