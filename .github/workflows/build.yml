@@ -36,7 +36,7 @@ jobs:
           wget \
           zip \
           zstd
-        sudo sh -c "mkdir /{build,prebuilt} && chown $(whoami):$(whoami) /{build,prebuilt}"
+        sudo bash -c "mkdir /{build,prebuilt} && chown $(whoami):$(whoami) /{build,prebuilt}"
         ls /
         git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6875598.git $CLANG_PATH
         git clone https://github.com/ElXreno/AnyKernel3 $ANYKERNEL_PATH
