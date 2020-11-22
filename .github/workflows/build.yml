@@ -65,7 +65,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: ${{ steps.setup_env.outputs.output_file }}.zip
-        name: ${{ steps.setup_env.outputs.output_file }}
+        name: ${{ steps.setup_env.outputs.output_file }}.zip
     
     - name: Upload binaries to release
       if: startsWith(github.ref, 'refs/tag/v')
